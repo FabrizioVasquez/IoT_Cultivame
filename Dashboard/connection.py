@@ -4,7 +4,7 @@ import time
 
 # global
 x_axis = 0
-fieldnames = ['times','temperature']
+fieldnames_ = ['times','humidity','temperature']
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
@@ -20,25 +20,23 @@ def on_message(client, userdata, message):
     #print("Message received: "  + message.payload.decode('utf-8'))
     global x_axis
     with open('info.csv',"a") as file:
-        csv_writer = csv.DictWriter(file,fieldnames = fieldnames)
+        csv_writer = csv.DictWriter(file,fieldnames = fieldnames_)
         # file.write(str(message.payload.decode('utf-8'))+"\n")
-        temperature = str(message.payload.decode('utf-8'))
+        vars = str(message.payload.decode('utf-8'))
+        list_vars = vars.split(',')
 
         rows = {
             "times": x_axis,
-            "temperature": temperature
+            "humidity": list_vars[0],
+            "temperature": list_vars[1]
         }
 
         csv_writer.writerow(rows)
-        print(x_axis,temperature)
+        print(x_axis,list_vars)
 
         x_axis +=1
         
     time.sleep(1)
-
-
-#def print():
-#    pass
   
 Connected = False   #global variable for the state of the connection
   

@@ -62,10 +62,10 @@ void loop() {
   float t = dht.readTemperature();
   message = "";
   message += h;
-  message += "-";
+  message += ",";
   message += "";
   message += t;
-  client.publish(topic, "Node: Sensing Enviroment"); //Send the message to the broker
+  // client.publish(topic, "Node: Sensing Enviroment"); //Send the message to the broker
   client.publish(topic, message.c_str()); //Send the message to the broker
 
   client.subscribe(topic);

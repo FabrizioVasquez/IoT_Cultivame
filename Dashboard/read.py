@@ -10,9 +10,11 @@ index = count()
 def animate(i):
     data = pd.read_csv('info.csv')
     x = data['times']
+    humidity = data['humidity']
     temperature = data['temperature']
 
     plt.cla()
+    plt.plot(x, humidity, label='Humedad')
     plt.plot(x, temperature, label='Temperatura')
 
     plt.legend(loc='upper left')
