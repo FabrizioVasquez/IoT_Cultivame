@@ -19,8 +19,8 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):    
     #print("Message received: "  + message.payload.decode('utf-8'))
     global x_axis
-    with open('info.csv',"a") as file:
-        csv_writer = csv.DictWriter(file,fieldnames = fieldnames_)
+    with open('info.csv',"a", newline='') as file:
+        csv_writer = csv.DictWriter(file,fieldnames = fieldnames_) #RMP
         # file.write(str(message.payload.decode('utf-8'))+"\n")
         vars = str(message.payload.decode('utf-8'))
         list_vars = vars.split(',')
@@ -45,6 +45,11 @@ port = 1883                         #Broker port
 user = "HUAWEIP10lite"                    #Connection username
 password = "9261566b39f3"            #Connection password
   
+with open('info.csv',"w",newline='') as file:
+    csv_writer = csv.DictWriter(file,fieldnames = fieldnames_)
+    csv_writer.writeheader()
+    file.close()
+
 client = mqttClient.Client("Python")               #create new instance
 client.username_pw_set(user, password=password)    #set username and password
 client.on_connect= on_connect                      #attach function to callback
