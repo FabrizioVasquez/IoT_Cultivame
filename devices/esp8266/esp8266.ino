@@ -1,12 +1,14 @@
 #include <ESP8266WiFi.h>
+#include <SoftwareSerial.h>
 #include <PubSubClient.h>  // WiFi
 #include <DHT.h>
 
 #define DHTPIN 0
+#define UVPIN 15
 #define DHTTYPE DHT11
 const char *ssid = "HUAWEIP10lite";         // Enter your WiFi name
 const char *password = "9261566b39f3";      // Enter WiFi password// MQTTBroker
-const char *mqtt_broker = "192.168.171.2";  // Enter your WiFi or Ethernet IP
+const char *mqtt_broker = "192.168.174.2";  // Enter your WiFi or Ethernet IP
 const char *topic = "test/topic";
 const int mqtt_port = 1883;
 
@@ -14,6 +16,8 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 DHT dht(DHTPIN, DHTTYPE);
 String message;
+String myString;
+char rdata; // received charactors
 
 void setup() {
   // Set software serial baud to 115200;
@@ -56,19 +60,36 @@ void callback(char *topic, byte *payload, unsigned int length) {
 
 void loop() {
   client.loop();
-  delay(2000);
+  //delay(2000);
+  //float g = analogRead(A0); //Gas
+  //float h = dht.readHumidity();
+  //float t = dht.readTemperature();
+  //float uv = analogRead(UVPIN); //UV
   // Publish and Subscribe
-  float h = dht.readHumidity();
-  float t = dht.readTemperature();
   message = "";
-  message += h;
+  /*message += h;
   message += ",";
   message += "";
   message += t;
-  // client.publish(topic, "Node: Sensing Enviroment"); //Send the message to the broker
-  client.publish(topic, message.c_str()); //Send the message to the broker
+  message += ","; 
+  message += String(h/1023*100);
+  message += ",";
+  message += uv;*/
 
-  client.subscribe(topic);
-  Serial.println("Node: Sensing Enviroment");
-  Serial.println(message);
+  if (Serial.available() > 0 ) {
+    rdata = Serial.read();
+
+    if ( rdata == '\n') {
+      Serial.println(myString); 
+      message = myString; //getValue(myString, ',', 0);
+      myString = "";
+    } else {
+      myString = myString + rdata;      
+    }
+
+  // client.publish(topic, "Node: Sensing Enviroment"); //Send the message to the broker
+    client.publish(topic, message.c_str()); //Send the message to the broker
+
+    client.subscribe(topic);//delay(100);
+  }
 }

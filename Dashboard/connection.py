@@ -4,7 +4,8 @@ import time
 
 # global
 x_axis = 0
-fieldnames_ = ['times','humidity','temperature']
+fieldnames_ = ['times','bmptemp','bmpprea','bmpalti', 'bmppreasea',
+               'bmprealalt', 'uvValue','rainvalue', 'co2value', 'h', 't']
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
@@ -23,12 +24,24 @@ def on_message(client, userdata, message):
         csv_writer = csv.DictWriter(file,fieldnames = fieldnames_) #RMP
         # file.write(str(message.payload.decode('utf-8'))+"\n")
         vars = str(message.payload.decode('utf-8'))
+        
+        if vars == "":
+            return
+
         list_vars = vars.split(',')
 
         rows = {
             "times": x_axis,
-            "humidity": list_vars[0],
-            "temperature": list_vars[1]
+            "bmptemp": list_vars[0],
+            "bmpprea": list_vars[1],
+            "bmpalti": list_vars[2],
+            "bmppreasea": list_vars[3],
+            "bmprealalt": list_vars[4],
+            "uvValue": list_vars[5],
+            "rainvalue": list_vars[6],
+            "co2value": list_vars[7],
+            "h": list_vars[8],
+            "t": list_vars[9],
         }
 
         csv_writer.writerow(rows)
@@ -40,7 +53,7 @@ def on_message(client, userdata, message):
   
 Connected = False   #global variable for the state of the connection
   
-broker_address= "192.168.171.2"     #Broker address
+broker_address= "192.168.174.2"     #Broker address
 port = 1883                         #Broker port
 user = "HUAWEIP10lite"                    #Connection username
 password = "9261566b39f3"            #Connection password
